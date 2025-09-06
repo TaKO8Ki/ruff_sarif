@@ -1,6 +1,5 @@
 import os
 
-
 def fibonacci(n):
     """Compute the nth number in the Fibonacci sequence."""
     x = 1
