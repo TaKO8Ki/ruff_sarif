@@ -1,0 +1,28 @@
+name: Ruff SARIF
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+    ruff:
+      runs-on: ubuntu-latest
+      permissions:
+        contents: read
+        security-events: write
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup uv
+          uses: astral-sh/setup-uv@v3
+
+        - name: Run Ruff and produce SARIF
+          run: |
+            uvx ruff check . --output-format sarif --exit-zero > ruff.sarif
+
+        - name: Upload SARIF to GitHub Code Scanning
+          uses: github/codeql-action/upload-sarif@v3
+          with:
+            sarif_file: ruff.sarif
