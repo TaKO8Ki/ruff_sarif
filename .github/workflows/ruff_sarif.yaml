@@ -35,7 +35,7 @@ jobs:
           run: cargo build -p ruff --release
 
         - name: Run Ruff (built from commit) and produce SARIF
-          run: ./ruff-src/target/release/ruff check . --output-format sarif --exit-zero > ruff.sarif
+          run: ./ruff-src/target/release/ruff check sarif --output-format sarif --exit-zero > ruff.sarif
 
         - name: Upload SARIF to GitHub Code Scanning
           uses: github/codeql-action/upload-sarif@v3
