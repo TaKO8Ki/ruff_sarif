@@ -15,12 +15,27 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v4
 
-        - name: Setup uv
-          uses: astral-sh/setup-uv@v3
+        - name: Checkout Ruff
+          uses: actions/checkout@v4
+          with:
+            repository: TaKO8Ki/ruff
+            ref: 533cc1046cea49a413c5a21c28e7fa032eed7dc6
+            path: ruff-src
 
-        - name: Run Ruff and produce SARIF
-          run: |
-            uvx ruff check . --output-format sarif --exit-zero > ruff.sarif
+        - name: Install Rust toolchain
+          uses: dtolnay/rust-toolchain@stable
+
+        - name: Cache Cargo
+          uses: Swatinem/rust-cache@v2
+          with:
+            workspaces: ruff-src
+
+        - name: Build Ruff from commit
+          working-directory: ruff-src
+          run: cargo build -p ruff --release
+
+        - name: Run Ruff (built from commit) and produce SARIF
+          run: ./ruff-src/target/release/ruff check . --output-format sarif --exit-zero > ruff.sarif
 
         - name: Upload SARIF to GitHub Code Scanning
           uses: github/codeql-action/upload-sarif@v3
